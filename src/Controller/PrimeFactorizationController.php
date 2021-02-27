@@ -15,14 +15,58 @@ class PrimeFactorizationController extends AbstractController
 
         $form->handleRequest($request);
 
+        $factors = [];
+
         if ($form->isSubmitted() && $form->isValid()) {
+            $number = $form->getData()['number'] ?? null;
+
+            // TODO: move to a service
+            // TODO: add validation (must be over 1)
+            // TODO: add test coverage
+
+            if ($this->isPrimeNumber($number)) {
+                $factors = [$number];
+            } else {
+                $divisor = 2;
+
+                while ($result = $number / $divisor) {
+                    if (!is_int($result)) {
+                        $divisor++;
+                        continue;
+                    }
+
+                    $number = $result;
+                    $factors[] = $divisor;
+
+                    if ($this->isPrimeNumber($result)) {
+                        $factors[] = $result;
+                        break;
+                    }
+                }
+            }
         }
 
         return $this->render(
             'primeFactorization.html.twig',
             [
-                'form' => $form->createView(),
+                'form'    => $form->createView(),
+                'factors' => $factors,
             ]
         );
+    }
+
+    private function isPrimeNumber(int $number): bool
+    {
+        if ($number <= 1) {
+            return false;
+        }
+
+        for ($i = 2; $i <= sqrt($number); $i++) {
+            if ($number % $i === 0) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

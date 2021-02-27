@@ -41,6 +41,16 @@
 
                         {{ form_end(form) }}
                     </div>
+
+                    {% if factors is not empty %}
+                        <div class="col-10 col-md-8 col-lg-6">
+                           <h3>Your factors are:</h3>
+
+                            {% for factor in factors %}
+                                <p>{{ factor }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
